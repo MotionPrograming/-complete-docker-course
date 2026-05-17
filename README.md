@@ -1,14 +1,14 @@
 # -complete-docker-course
 🐳 Complete Docker Tutorial in Bangla — Beginner to Intermediate with hands-on projects, Docker Compose, networking, volumes, CI/CD, and production best practices.
 
-# 🐳 Docker সম্পূর্ণ কোর্স (বাংলায়)
-### Beginner থেকে Intermediate — W3Schools স্টাইলে
+🐳 Docker সম্পূর্ণ কোর্স (বাংলায়)
+Beginner থেকে Intermediate — W3Schools স্টাইলে
 
 ---
 
-## 📋 কোর্সের বিষয়বস্তু (Table of Contents)
+📋 কোর্সের বিষয়বস্তু (Table of Contents)
 
-**🟢 Beginner**
+🟢 Beginner
 1. [Docker কী?](#১-docker-কী)
 2. [Docker ইনস্টল করা](#২-docker-ইনস্টল-করা)
 3. [Docker-এর মূল ধারণাগুলো](#৩-docker-এর-মূল-ধারণাগুলো)
@@ -23,7 +23,7 @@
 12. [প্র্যাকটিক্যাল প্রজেক্ট](#১২-প্র্যাকটিক্যাল-প্রজেক্ট)
 13. [সাধারণ সমস্যা ও সমাধান](#১৩-সাধারণ-সমস্যা-ও-সমাধান)
 
-**🔴 Advanced (Production Level)**
+🔴 Advanced (Production Level)
 14. [Multi-stage Builds](#১৪-multi-stage-builds)
 15. [Docker Security](#১৫-docker-security)
 16. [Resource Limits](#১৬-resource-limits)
@@ -37,7 +37,7 @@
 24. [Production Best Practices](#২৪-production-best-practices)
 25. [Docker + CI/CD](#২৫-docker--cicd-github-actions)
 26. [Kubernetes রোডম্যাপ](#২৬-docker--kubernetes-রোডম্যাপ)
-**🟣 Expert (Deep Dive)**
+🟣 Expert (Deep Dive)
 27. [Docker Architecture Internal](#২৭-docker-architecture-internal)
 28. [Container Lifecycle](#২৮-container-lifecycle-জীবনচক্র)
 29. [CMD vs ENTRYPOINT গভীর ব্যাখ্যা](#২৯-cmd-vs-entrypoint--গভীর-ব্যাখ্যা)
@@ -55,11 +55,11 @@
 
 ---
 
-## ১. Docker কী?
+ ১. Docker কী?
 
 Docker হলো একটি **open-source platform** যা application-কে **container** এর মধ্যে চালাতে সাহায্য করে।
 
-### সহজ ভাষায় বুঝি 🧠
+সহজ ভাষায় বুঝি 🧠
 
 কল্পনা করো তুমি একটি রান্না করা খাবার ডেলিভারি দিচ্ছো। খাবারটি যাতে নষ্ট না হয়, তুমি সেটিকে একটি **বাক্সে** ভরে পাঠাও — যেখানে খাবার + তার প্রয়োজনীয় সব উপকরণ আছে।
 
