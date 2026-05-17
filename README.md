@@ -1,4 +1,4 @@
-# -complete-docker-course
+# complete-docker-course
 🐳 Complete Docker Tutorial in Bangla — Beginner to Intermediate with hands-on projects, Docker Compose, networking, volumes, CI/CD, and production best practices.
 
 🐳 Docker সম্পূর্ণ কোর্স (বাংলায়)
