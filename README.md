@@ -55,7 +55,7 @@ Beginner থেকে Intermediate — W3Schools স্টাইলে
 26. [Kubernetes রোডম্যাপ](#২৬-docker--kubernetes-রোডম্যাপ)
 
 
-#🟣 Expert (Deep Dive)
+
 [ 🟣 Expert (Deep Dive)](#-expert (deep dive))
 
 
