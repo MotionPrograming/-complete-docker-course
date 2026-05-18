@@ -8,15 +8,9 @@ Beginner থেকে Intermediate — W3Schools স্টাইলে
 
 <div align="center">
 
-
-
 ![Docker Badge](https://img.shields.io/badge/Docker-Complete-2496ED?style=for-the-badge&logo=docker)
-
 ![Bengali](https://img.shields.io/badge/Language-Bengali-FF7700?style=for-the-badge)
-
 ![Status](https://img.shields.io/badge/Status-Comprehensive-success?style=for-the-badge)
-
-
 
 </div>
 
@@ -37,8 +31,7 @@ Beginner থেকে Intermediate — W3Schools স্টাইলে
 12. [প্র্যাকটিক্যাল প্রজেক্ট](#১২-প্র্যাকটিক্যাল-প্রজেক্ট)
 13. [সাধারণ সমস্যা ও সমাধান](#১৩-সাধারণ-সমস্যা-ও-সমাধান)
 
-
-[🔴 Advanced (Production Level)](#-advanced (production level))
+[🔴 Advanced (Production Level)](#-advanced-production-level)
 
 14. [Multi-stage Builds](#১৪-multi-stage-builds)
 15. [Docker Security](#১৫-docker-security)
@@ -48,20 +41,17 @@ Beginner থেকে Intermediate — W3Schools স্টাইলে
 19. [Restart Policies](#১৯-docker-restart-policies)
 20. [Bind Mount vs Volume বিস্তারিত](#২০-bind-mount-vs-volume-বিস্তারিত)
 21. [Environment Variables বিস্তারিত](#২১-environment-variables-বিস্তারিত)
-22. [Docker Logs বিস্তারিত](#২২-docker-logs--বিস্তারিত)
+22. [Docker Logs বিস্তারিত](#২২-docker-logs-বিস্তারিত)
 23. [Cleanup Best Practices](#২৩-docker-cleanup-best-practices)
 24. [Production Best Practices](#২৪-production-best-practices)
 25. [Docker + CI/CD](#২৫-docker--cicd-github-actions)
 26. [Kubernetes রোডম্যাপ](#২৬-docker--kubernetes-রোডম্যাপ)
 
-
-
-[ 🟣 Expert (Deep Dive)](#-expert (deep dive))
-
+[🟣 Expert (Deep Dive)](#-expert-deep-dive)
 
 27. [Docker Architecture Internal](#২৭-docker-architecture-internal)
 28. [Container Lifecycle](#২৮-container-lifecycle-জীবনচক্র)
-29. [CMD vs ENTRYPOINT গভীর ব্যাখ্যা](#২৯-cmd-vs-entrypoint--গভীর-ব্যাখ্যা)
+29. [CMD vs ENTRYPOINT গভীর ব্যাখ্যা](#২৯-cmd-vs-entrypoint-গভীর-ব্যাখ্যা)
 30. [Layer Caching Optimization](#৩০-docker-layer-caching--build-optimize-করো)
 31. [Named Container Best Practice](#৩১-named-container-best-practice)
 32. [Foreground vs Detached Mode](#৩২-foreground-vs-detached-mode)
@@ -73,6 +63,17 @@ Beginner থেকে Intermediate — W3Schools স্টাইলে
 38. [VPS Deployment](#৩৮-vps-এ-deployment)
 39. [Beginner Common Mistakes](#৩৯-beginner-দের-সাধারণ-ভুল)
 40. [Capstone Project](#৪০-final-capstone-project--portfolio-ready)
+
+[🆕 নতুন যোগ করা অধ্যায়](#-নতুন-যোগ-করা-অধ্যায়)
+
+41. [গুরুত্বপূর্ণ Missing Commands](#৪১-গুরুত্বপূর্ণ-missing-commands)
+42. [ARG vs ENV — গভীর ব্যাখ্যা](#৪২-arg-vs-env--গভীর-ব্যাখ্যা)
+43. [Dockerfile Extra Instructions](#৪৩-dockerfile-extra-instructions)
+44. [docker commit — কেন ব্যবহার করবে না](#৪৪-docker-commit--কেন-ব্যবহার-করবে-না)
+45. [BuildKit ও docker buildx](#৪৫-buildkit-ও-docker-buildx)
+46. [Docker Compose Profiles](#৪৬-docker-compose-profiles)
+47. [Docker Compose Override](#৪৭-docker-compose-override)
+48. [Docker Swarm — ভূমিকা](#৪৮-docker-swarm--ভূমিকা)
 
 ---
 
@@ -427,10 +428,13 @@ CMD ["python3", "app.py"]
 | `ADD` | COPY + URL/zip support | `ADD file.tar.gz /app/` |
 | `WORKDIR` | Working directory | `WORKDIR /app` |
 | `EXPOSE` | Port উন্মুক্ত করে | `EXPOSE 8080` |
-| `ENV` | Environment variable | `ENV DB_HOST=localhost` |
+| `ENV` | Environment variable (runtime) | `ENV DB_HOST=localhost` |
+| `ARG` | Build-time variable | `ARG VERSION=1.0` |
 | `CMD` | Default command | `CMD ["python", "app.py"]` |
 | `ENTRYPOINT` | Container entry point | `ENTRYPOINT ["nginx"]` |
-| `ARG` | Build-time variable | `ARG VERSION=1.0` |
+| `ONBUILD` | Child image এ trigger হয় | `ONBUILD COPY . /app` |
+| `STOPSIGNAL` | Stop signal নির্ধারণ | `STOPSIGNAL SIGTERM` |
+| `SHELL` | Default shell বদলায় | `SHELL ["/bin/bash", "-c"]` |
 
 ### Image Build করো
 
@@ -572,6 +576,7 @@ bridge:   Default. Container গুলো একই host এ কথা বলে
 host:     Container host-এর network ব্যবহার করে
 none:     কোনো network নেই
 overlay:  Multiple host এ কাজ করে (Swarm এ)
+macvlan:  Container কে physical network device এর মতো দেখায়
 ```
 
 ### Network তৈরি করো
@@ -598,7 +603,27 @@ docker run -d \
 
 # পরে যোগ করতে
 docker network connect আমার-network container-name
+
+# Network থেকে বের করতে
+docker network disconnect আমার-network container-name
 ```
+
+### Container DNS — কীভাবে কাজ করে
+
+Custom network এ container গুলো **নাম দিয়ে** একে অপরকে চিনতে পারে। এটি Docker-এর built-in DNS।
+
+```bash
+# একই network এ দুটো container
+docker network create app-net
+
+docker run -d --name db --network app-net postgres
+docker run -d --name api --network app-net myapp
+
+# api container থেকে "db" নামে database এ connect করা যাবে
+# কারণ Docker automatically DNS resolve করে
+```
+
+> **💡 গুরুত্বপূর্ণ:** এই DNS শুধু custom network এ কাজ করে, default bridge এ করে না।
 
 ### উদাহরণ — Web + Database
 
@@ -688,6 +713,9 @@ docker compose ps
 
 # একটি নির্দিষ্ট service restart
 docker compose restart web
+
+# একটি নির্দিষ্ট service scale করো
+docker compose up -d --scale web=3
 ```
 
 ### সম্পূর্ণ উদাহরণ — WordPress সাইট
@@ -974,6 +1002,7 @@ docker pull nginx              # Image ডাউনলোড
 docker images                  # সব image দেখো
 docker rmi nginx               # Image মুছো
 docker build -t myapp .        # Image তৈরি করো
+docker history myapp           # Image layer history দেখো ← নতুন
 
 # === CONTAINER ===
 docker run nginx               # Container চালাও
@@ -987,6 +1016,11 @@ docker start mycontainer       # চালু করো
 docker rm mycontainer          # মুছো
 docker exec -it mycontainer bash  # ভেতরে ঢুকো
 docker logs mycontainer        # Log দেখো
+docker cp mycontainer:/app/file.txt .  # File copy করো ← নতুন
+docker diff mycontainer        # কী বদলেছে দেখো ← নতুন
+docker top mycontainer         # Process দেখো ← নতুন
+docker port mycontainer        # Port mapping দেখো ← নতুন
+docker events                  # Real-time events দেখো ← নতুন
 
 # === VOLUME ===
 docker volume create mydata    # Volume তৈরি
@@ -1381,6 +1415,8 @@ Docker Basics
     ↓
 Docker Compose (multi-container)
     ↓
+Docker Swarm (basic orchestration) ← নতুন যোগ
+    ↓
 Kubernetes Pods (container group)
     ↓
 Deployments (scaling & updates)
@@ -1420,6 +1456,9 @@ Helm (package manager)
 
 **প্রশ্ন: `docker run` vs `docker exec` পার্থক্য?**
 > `docker run` — নতুন container তৈরি করে চালায়। `docker exec` — চলমান container এ command চালায়।
+
+**প্রশ্ন: ARG vs ENV পার্থক্য?**
+> `ARG` — শুধু build সময় কাজ করে। `ENV` — build এবং runtime দুই সময়ই কাজ করে।
 
 ---
 
@@ -1846,11 +1885,6 @@ volumes:
   grafana-data:
 ```
 
-**Access:**
-- cAdvisor: `http://localhost:8081`
-- Prometheus: `http://localhost:9090`
-- Grafana: `http://localhost:3000`
-
 ---
 
 ## ৩৭. Docker Backup & Restore
@@ -2152,6 +2186,661 @@ jobs:
 
 ---
 
+---
+
+# 🆕 নতুন যোগ করা অধ্যায়
+
+---
+
+## ৪১. গুরুত্বপূর্ণ Missing Commands
+
+এই commands গুলো প্রায়ই দরকার হয়, কিন্তু beginner রা জানে না।
+
+---
+
+### `docker cp` — File Copy করো
+
+Container এবং host এর মধ্যে file আদান-প্রদান করো।
+
+```bash
+# Container → Host (container থেকে local এ নিয়ে আসো)
+docker cp my-container:/app/logs/error.log ./error.log
+
+# Host → Container (local থেকে container এ পাঠাও)
+docker cp ./config.json my-container:/app/config.json
+
+# পুরো folder copy করো
+docker cp my-container:/app/data ./backup-data
+```
+
+**কখন দরকার হয়:**
+- Container এর log file নামাতে
+- কোনো config file container এ দিতে
+- Debug করার সময় file দেখতে
+
+---
+
+### `docker diff` — কী বদলেছে দেখো
+
+Container start হওয়ার পর filesystem এ কী কী পরিবর্তন হয়েছে দেখো।
+
+```bash
+docker diff my-container
+```
+
+**আউটপুট:**
+```
+C /app           ← C = Changed (বদলেছে)
+A /app/logs      ← A = Added (নতুন যোগ হয়েছে)
+D /tmp/cache     ← D = Deleted (মুছে গেছে)
+```
+
+**কখন দরকার হয়:** Debug করার সময় — container এ অপ্রত্যাশিত কী হচ্ছে বুঝতে।
+
+---
+
+### `docker history` — Image Layer দেখো
+
+Image কোন কোন layer দিয়ে তৈরি তা দেখো।
+
+```bash
+docker history nginx
+
+# বিস্তারিত দেখো
+docker history --no-trunc nginx
+```
+
+**আউটপুট:**
+```
+IMAGE         CREATED      CREATED BY                   SIZE
+a6bd71f48f68  2 weeks ago  CMD ["nginx" "-g" "daemon…   0B
+<missing>     2 weeks ago  EXPOSE map[80/tcp:{}]         0B
+<missing>     2 weeks ago  COPY /etc/nginx /etc/nginx    23.5MB
+```
+
+**কখন দরকার হয়:** Image এর layer দেখে size বোঝা ও optimize করা।
+
+---
+
+### `docker top` — Container এর Process দেখো
+
+Container এর ভেতরে কোন process গুলো চলছে দেখো — বাইরে থেকেই।
+
+```bash
+docker top my-container
+
+# নির্দিষ্ট format এ
+docker top my-container aux
+```
+
+**আউটপুট:**
+```
+UID    PID    PPID   CMD
+root   1234   1      nginx: master process
+nginx  1235   1234   nginx: worker process
+```
+
+**কখন দরকার হয়:** Container এর ভেতরে না ঢুকেই process monitor করতে।
+
+---
+
+### `docker port` — Port Mapping দেখো
+
+Container এর কোন port কোথায় map হয়েছে দেখো।
+
+```bash
+# সব port mapping দেখো
+docker port my-container
+
+# নির্দিষ্ট port দেখো
+docker port my-container 80
+```
+
+**আউটপুট:**
+```
+80/tcp -> 0.0.0.0:8080
+443/tcp -> 0.0.0.0:8443
+```
+
+---
+
+### `docker events` — Real-time Events দেখো
+
+Docker এ কী কী ঘটছে সেটা real-time এ দেখো।
+
+```bash
+# সব events দেখো (live)
+docker events
+
+# নির্দিষ্ট container এর events
+docker events --filter container=my-container
+
+# নির্দিষ্ট সময়ের পর থেকে
+docker events --since 2024-01-01
+
+# শুধু নির্দিষ্ট event type
+docker events --filter event=start
+docker events --filter event=stop
+docker events --filter event=die
+```
+
+**আউটপুট:**
+```
+2024-01-15T10:30:00 container start a1b2c3... (name=web)
+2024-01-15T10:30:05 container die a1b2c3... (exitCode=1)
+2024-01-15T10:30:06 container start a1b2c3... (name=web)
+```
+
+**কখন দরকার হয়:** Production এ monitor করতে, CI/CD pipeline debug করতে।
+
+---
+
+## ৪২. ARG vs ENV — গভীর ব্যাখ্যা
+
+এই দুটো দেখতে একই মনে হয় কিন্তু কাজ সম্পূর্ণ আলাদা।
+
+### মূল পার্থক্য
+
+```
+ARG  → শুধু BUILD সময় কাজ করে (docker build)
+ENV  → BUILD এবং RUNTIME দুই সময়ই কাজ করে
+```
+
+```
+docker build ──→ [ARG কাজ করে] ──→ Image তৈরি
+                                         ↓
+                              docker run ──→ [ENV কাজ করে]
+```
+
+### ARG — Build Argument
+
+```dockerfile
+# Dockerfile এ declare করো
+ARG APP_VERSION=1.0
+ARG BUILD_DATE
+
+# ARG এর value ব্যবহার করো
+RUN echo "Building version: $APP_VERSION"
+LABEL version=$APP_VERSION
+```
+
+```bash
+# Build সময় value দাও
+docker build --build-arg APP_VERSION=2.5 --build-arg BUILD_DATE=2024-01-15 -t myapp .
+```
+
+> **⚠️ সতর্কতা:** ARG এর value `docker history` দিয়ে দেখা যায়। তাই password বা secret কখনো ARG এ দিও না।
+
+### ENV — Runtime Environment
+
+```dockerfile
+FROM python:3.11
+ENV APP_ENV=production
+ENV PORT=8000
+ENV DB_HOST=localhost
+
+# ENV এর value build এও ব্যবহার করা যায়
+RUN mkdir -p /app/$APP_ENV
+```
+
+```bash
+# Run সময় override করা যায়
+docker run -e APP_ENV=development -e PORT=5000 myapp
+```
+
+### ARG + ENV একসাথে — Best Pattern
+
+```dockerfile
+# Build এ নাও, Runtime এও রাখো
+ARG APP_VERSION=1.0
+ENV APP_VERSION=$APP_VERSION
+
+ARG NODE_ENV=production
+ENV NODE_ENV=$NODE_ENV
+```
+
+```bash
+docker build --build-arg NODE_ENV=development -t myapp .
+# এখন container এও NODE_ENV=development থাকবে
+```
+
+### তুলনা সারণী
+
+| বিষয় | ARG | ENV |
+|------|-----|-----|
+| কখন কাজ করে | Build time only | Build + Runtime |
+| Override পদ্ধতি | `--build-arg` | `-e` বা `--env` |
+| docker inspect এ দেখা যায়? | না | হ্যাঁ |
+| docker history তে দেখা যায়? | হ্যাঁ | হ্যাঁ |
+| Secret রাখা যাবে? | ❌ না | ❌ না |
+| Default value | হ্যাঁ | হ্যাঁ |
+
+> **🔑 মনে রাখো:** Secret কখনো ARG বা ENV এ রেখো না — `docker secrets` বা runtime env file ব্যবহার করো।
+
+---
+
+## ৪৩. Dockerfile Extra Instructions
+
+### `ONBUILD` — Child Image এ Trigger করো
+
+Base image বানানোর সময় `ONBUILD` instruction দিলে, সেই image থেকে কেউ নতুন image বানালে instruction টি automatically চলে।
+
+```dockerfile
+# base-python/Dockerfile
+FROM python:3.11-slim
+WORKDIR /app
+ONBUILD COPY requirements.txt .
+ONBUILD RUN pip install -r requirements.txt
+ONBUILD COPY . .
+```
+
+```dockerfile
+# myapp/Dockerfile — শুধু এটুকুই লিখলেই হয়!
+FROM myteam/base-python:latest
+# ONBUILD গুলো automatically চলবে
+CMD ["python", "app.py"]
+```
+
+**কখন ব্যবহার করবে:** Team এর জন্য shared base image বানাতে।
+
+---
+
+### `STOPSIGNAL` — Stop Signal নির্ধারণ করো
+
+`docker stop` দিলে container কে কোন signal পাঠানো হবে তা নির্ধারণ করো।
+
+```dockerfile
+# Default হলো SIGTERM
+# কিন্তু কিছু app SIGQUIT বা অন্য signal চেনে
+STOPSIGNAL SIGQUIT
+
+# অথবা signal number দিয়ে
+STOPSIGNAL 9
+```
+
+**কখন দরকার:** যে app গুলো graceful shutdown এর জন্য SIGTERM এর বদলে অন্য signal ব্যবহার করে।
+
+---
+
+### `SHELL` — Default Shell বদলাও
+
+Dockerfile এ `RUN` command কোন shell এ চলবে তা নির্ধারণ করো।
+
+```dockerfile
+# Default shell: /bin/sh -c
+RUN echo "hello"
+
+# Bash ব্যবহার করতে চাইলে
+SHELL ["/bin/bash", "-c"]
+RUN echo "hello from bash"
+
+# Windows এ PowerShell
+SHELL ["powershell", "-Command"]
+RUN Write-Host "Hello from PowerShell"
+```
+
+---
+
+### `COPY --chown` — Permission সহ Copy
+
+File copy করার সময়ই ownership নির্ধারণ করো।
+
+```dockerfile
+# user appuser কে file এর owner করো
+RUN useradd -m appuser
+COPY --chown=appuser:appuser . /app
+
+# UID:GID দিয়েও করা যায়
+COPY --chown=1000:1000 app.py /app/
+```
+
+এটি না করলে root এর file অন্য user access করতে পারে না।
+
+---
+
+## ৪৪. `docker commit` — কেন ব্যবহার করবে না
+
+`docker commit` দিয়ে চলমান container থেকে image বানানো যায়। কিন্তু এটি **anti-pattern** — জানো কেন।
+
+### কীভাবে কাজ করে
+
+```bash
+# Container এ কিছু পরিবর্তন করো
+docker run -it ubuntu bash
+# ভেতরে: apt install nginx
+
+# Container থেকে image বানাও
+docker commit my-container my-custom-ubuntu
+```
+
+### কেন ব্যবহার করবে না ❌
+
+```
+সমস্যা ১: Reproducible না
+           → কীভাবে image বানানো হলো কেউ জানে না
+           → অন্যরা একই image বানাতে পারবে না
+
+সমস্যা ২: Version control নেই
+           → Git এ রাখা যায় না
+           → Rollback কঠিন
+
+সমস্যা ৩: Layer নোংরা হয়
+           → অনেক অপ্রয়োজনীয় layer তৈরি হয়
+           → Image বড় হয়
+
+সমস্যা ৪: CI/CD তে কাজ করে না
+           → Automated pipeline এ চালানো যায় না
+```
+
+### ✅ সঠিক পদ্ধতি — সবসময় Dockerfile ব্যবহার করো
+
+```dockerfile
+# docker commit এর বদলে এটি লেখো
+FROM ubuntu:20.04
+RUN apt-get update && apt-get install -y nginx
+```
+
+> **💡 একমাত্র ব্যতিক্রম:** Quick debugging বা experiment এর সময় temporary image বানাতে `docker commit` ব্যবহার করা যায়। কিন্তু কখনো production এ নয়।
+
+---
+
+## ৪৫. BuildKit ও docker buildx
+
+**BuildKit** হলো Docker এর modern build system — দ্রুততর, স্মার্ট cache, এবং নতুন features।
+
+### BuildKit Enable করো
+
+```bash
+# একবারের জন্য
+DOCKER_BUILDKIT=1 docker build -t myapp .
+
+# সবসময়ের জন্য (daemon.json এ)
+# { "features": { "buildkit": true } }
+
+# Docker 23+ এ automatically enabled
+```
+
+### BuildKit এর সুবিধা
+
+```
+✅ Parallel build — layer গুলো parallel এ build হয়
+✅ Better cache — smarter cache management
+✅ Secret mount — secret file build এ ব্যবহার কিন্তু image এ যায় না
+✅ SSH mount — private repo access build এ
+✅ Multi-platform — একসাথে arm64 + amd64 image
+```
+
+### Secret Mount — সবচেয়ে গুরুত্বপূর্ণ Feature
+
+```dockerfile
+# secret build এ ব্যবহার করো কিন্তু image এ রাখো না
+RUN --mount=type=secret,id=mysecret \
+    cat /run/secrets/mysecret
+```
+
+```bash
+docker build --secret id=mysecret,src=./my-secret-file -t myapp .
+```
+
+### `docker buildx` — Multi-platform Build
+
+একই Dockerfile থেকে Linux/Mac/Windows সব platform এর image বানাও।
+
+```bash
+# buildx setup করো (একবার)
+docker buildx create --name mybuilder --use
+
+# Multi-platform image build করো
+docker buildx build \
+  --platform linux/amd64,linux/arm64 \
+  -t username/myapp:latest \
+  --push \
+  .
+```
+
+**কেন দরকার:**
+- M1/M2 Mac এ build করে Linux server এ deploy করতে
+- Raspberry Pi (arm64) এর জন্য image বানাতে
+- একটি image সব platform এ চালাতে
+
+---
+
+## ৪৬. Docker Compose Profiles
+
+একই `docker-compose.yml` এ development ও production এর জন্য আলাদা service রাখো।
+
+### Profile সহ docker-compose.yml
+
+```yaml
+version: '3.8'
+
+services:
+  # সবসময় চলে (কোনো profile নেই)
+  api:
+    build: .
+    ports:
+      - "5000:5000"
+
+  db:
+    image: postgres:16-alpine
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+
+  # শুধু development এ চলে
+  adminer:
+    image: adminer
+    ports:
+      - "8080:8080"
+    profiles:
+      - dev
+
+  # শুধু development এ চলে
+  mailhog:
+    image: mailhog/mailhog
+    ports:
+      - "8025:8025"
+    profiles:
+      - dev
+
+  # শুধু production এ চলে
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    profiles:
+      - prod
+
+volumes:
+  pg-data:
+```
+
+### Profile ব্যবহার করো
+
+```bash
+# Development এ — dev profile চালু করো
+docker compose --profile dev up -d
+
+# Production এ — prod profile চালু করো
+docker compose --profile prod up -d
+
+# শুধু core services (কোনো profile ছাড়া)
+docker compose up -d
+
+# Multiple profile একসাথে
+docker compose --profile dev --profile monitoring up -d
+```
+
+**সুবিধা:** একটি file এ সব কিছু, কিন্তু environment অনুযায়ী আলাদা আলাদা চালাও।
+
+---
+
+## ৪৭. Docker Compose Override
+
+`docker-compose.override.yml` automatically main file এর সাথে merge হয়।
+
+### ফাইল Structure
+
+```
+myapp/
+├── docker-compose.yml          ← Base (সবার জন্য)
+├── docker-compose.override.yml ← Development (automatically merge হয়)
+└── docker-compose.prod.yml     ← Production (manually specify করতে হয়)
+```
+
+### docker-compose.yml (Base)
+
+```yaml
+version: '3.8'
+
+services:
+  api:
+    build: .
+    environment:
+      - DB_HOST=db
+
+  db:
+    image: postgres:16-alpine
+```
+
+### docker-compose.override.yml (Development)
+
+```yaml
+version: '3.8'
+
+services:
+  api:
+    volumes:
+      - .:/app          # Code live sync
+    environment:
+      - DEBUG=true
+      - APP_ENV=development
+    ports:
+      - "5000:5000"
+
+  db:
+    ports:
+      - "5432:5432"     # Local এ DB access করতে
+```
+
+### docker-compose.prod.yml (Production)
+
+```yaml
+version: '3.8'
+
+services:
+  api:
+    restart: unless-stopped
+    environment:
+      - APP_ENV=production
+      - DEBUG=false
+
+  db:
+    restart: unless-stopped
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+
+volumes:
+  pg-data:
+```
+
+### ব্যবহার করো
+
+```bash
+# Development — override automatically apply হয়
+docker compose up -d
+
+# Production — নির্দিষ্ট করে দাও
+docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+```
+
+---
+
+## ৪৮. Docker Swarm — ভূমিকা
+
+Docker Compose → **Docker Swarm** → Kubernetes। Swarm হলো Docker এর built-in orchestration tool।
+
+### Swarm কী করে?
+
+```
+একটি Compose এ একটি machine এ সব চলে।
+Swarm এ অনেক machine এ container ছড়িয়ে দেওয়া যায়।
+
+Machine 1 (Manager)
+├── web container
+└── db container
+
+Machine 2 (Worker)
+├── web container
+└── web container  ← scaling!
+
+Machine 3 (Worker)
+└── web container
+```
+
+### Swarm শুরু করো
+
+```bash
+# Manager node এ
+docker swarm init
+
+# Worker node যোগ করতে (manager থেকে token নাও)
+docker swarm join-token worker
+
+# Worker এ এই command চালাও
+docker swarm join --token <token> <manager-ip>:2377
+```
+
+### Service Deploy করো
+
+```bash
+# Service তৈরি করো
+docker service create \
+  --name web \
+  --replicas 3 \
+  --publish 80:80 \
+  nginx
+
+# Service দেখো
+docker service ls
+
+# Scaling করো
+docker service scale web=5
+
+# Update করো
+docker service update --image nginx:alpine web
+
+# Service মুছো
+docker service rm web
+```
+
+### Stack Deploy করো (Compose file দিয়ে)
+
+```bash
+# Compose file কে Swarm এ deploy করো
+docker stack deploy -c docker-compose.yml myapp
+
+# Stack দেখো
+docker stack ls
+
+# Service দেখো
+docker stack services myapp
+
+# Stack মুছো
+docker stack rm myapp
+```
+
+### Compose vs Swarm vs Kubernetes
+
+| বিষয় | Docker Compose | Docker Swarm | Kubernetes |
+|------|--------------|-------------|-----------|
+| Scale | ❌ সীমিত | ✅ ভালো | ✅ চমৎকার |
+| Setup | সহজ | মাঝারি | কঠিন |
+| Production | ছোট project | মাঝারি | বড় |
+| Learning | ⭐ | ⭐⭐ | ⭐⭐⭐⭐ |
+| কখন ব্যবহার | Development | Small team prod | Enterprise |
+
+---
+
 ## 🎯 কোর্স শেষে তুমি পারবে
 
 ✅ Production-ready Dockerfile লিখতে  
@@ -2163,6 +2852,10 @@ jobs:
 ✅ Real VPS এ application deploy করতে  
 ✅ Container monitoring setup করতে  
 ✅ Database backup ও restore করতে  
+✅ ARG vs ENV সঠিকভাবে ব্যবহার করতে  
+✅ BuildKit ও multi-platform build করতে  
+✅ Compose profiles ও override দিয়ে environment manage করতে  
+✅ Docker Swarm দিয়ে basic orchestration করতে  
 ✅ Kubernetes শেখার জন্য সম্পূর্ণ ready হতে  
 
 ---
